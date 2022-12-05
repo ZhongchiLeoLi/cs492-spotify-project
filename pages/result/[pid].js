@@ -40,8 +40,8 @@ export async function getServerSideProps({ params }) {
   // console.log(id);
 
   // const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city.name}&units=metric&appid=${process.env.OPENWEATHER_API_KEY}`);
-  const playlist = await fetch(`https://147.182.164.204:8080/playlist?id=${id}`, {agent: httpsAgent});
-  const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}`, {agent: httpsAgent});
+  const playlist = await fetch(`https://147.182.164.204:8080/playlist?id=${id}`);
+  const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}`);
   try {
     const PlaylistData = await playlist.json();
     const RecsData = await recs.json();
