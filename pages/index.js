@@ -23,7 +23,7 @@ export default function Home() {
         </div>
         <p>You can find the link of your Spotify playlist by clicking the &quot;...&quot; button near the play button, then click &quot;Copy Playlist Link&quot; under the Share menu</p>
         <Image
-          src="/../public/demo.png"
+          src="/demo.png"
           alt={`demo picture for the instructions of finding your Spotify playlist ID`}
           width={724}
           height={628}
