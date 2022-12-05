@@ -100,7 +100,7 @@ export default function Result({ playlist, recs, id}) {
 
   const updateRecs = async () => {
     let tracks = selectedTracks.join();
-    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&seeds${tracks}`, {agent: httpsAgent});
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&seeds${tracks}`);
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
@@ -124,7 +124,7 @@ export default function Result({ playlist, recs, id}) {
   }
 
   const updateRecsWithCustomSpecs = async () => {
-    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&acousticness=${ac}&danceability=${da}&instrumentalness=${ins}&liveness=${li}&energy=${en}&speechiness=${sp}&valence=${va}`, {agent: httpsAgent});
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&acousticness=${ac}&danceability=${da}&instrumentalness=${ins}&liveness=${li}&energy=${en}&speechiness=${sp}&valence=${va}`);
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
