@@ -1,0 +1,83 @@
+.wrapper{
+  width: 500px;
+  position: relative;
+  display: flex;
+}
+
+.searchInput {
+  width: 77%;
+  /* padding: 13px 18px;
+  border-radius: 18px;
+  font-size: 1.25rem;
+  transition: all 0.3s ease;
+  background-color: #fff;
+  border: 1px solid #fff;
+  outline: none; */
+}
+
+.searchInput:focus {
+  box-shadow: 0 0 40px rgba(125, 214, 255, 0.527);
+}
+
+.searchInput:hover {
+  box-shadow: 0 0 40px rgba(228, 246, 255, 0.719);
+}
+
+.resultsList {
+  position: absolute;
+  top: calc(100% + 10px);
+  width: 100%;
+  padding: 5px 15px;
+  margin: 0;
+  list-style: none;
+  border-radius: 10px;
+  z-index: 100;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.resultsItem:not(:last-child) {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
+.resultsLink {
+  display: block;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  width: 100%;
+  padding: 10px 0;
+}
+
+.resultsLink:hover {
+  letter-spacing: 2px;
+}
+
+@media (max-width: 830px) {
+  .searchInput{
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .topBar, .cols {
+    flex-direction: column;
+  }
+  .leftCol {
+    order: 2!important;
+  }
+  .leftCol, .rightCol, .searchWrapper{
+    width: 100%;
+  }
+  .rightCol {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .weatherImg {
+    width: 70%;
+  }
+  .weatherImg img {
+    left: 0 !important;
+  }
+}
