@@ -5,6 +5,8 @@ import Track from '../../components/Track';
 import Link from 'next/link';
 import Slider, { SliderTooltip } from 'rc-slider';
 
+import { Agent } from 'https';
+
 const { Handle } = Slider;
 
 import 'rc-slider/assets/index.css';
@@ -33,11 +35,14 @@ ChartJS.register(
 
 export async function getServerSideProps({ params }) {
   const id = params.pid;
+  const httpsAgent = new Agent({
+    rejectUnauthorized: false,
+  });
   // console.log(id);
 
   // const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city.name}&units=metric&appid=${process.env.OPENWEATHER_API_KEY}`);
-  const playlist = await fetch(`http://147.182.164.204:8080/playlist?id=${id}`);
-  const recs = await fetch(`http://147.182.164.204:8080/recs?id=${id}`);
+  const playlist = await fetch(`https://147.182.164.204:8080/playlist?id=${id}`, {agent: httpsAgent});
+  const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}`, {agent: httpsAgent});
   try {
     const PlaylistData = await playlist.json();
     const RecsData = await recs.json();
@@ -96,7 +101,7 @@ export default function Result({ playlist, recs, id}) {
 
   const updateRecs = async () => {
     let tracks = selectedTracks.join();
-    const recs = await fetch(`http://147.182.164.204:8080/recs?id=${id}&seeds${tracks}`);
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&seeds${tracks}`);
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
@@ -120,7 +125,7 @@ export default function Result({ playlist, recs, id}) {
   }
 
   const updateRecsWithCustomSpecs = async () => {
-    const recs = await fetch(`http://147.182.164.204:8080/recs?id=${id}&acousticness=${ac}&danceability=${da}&instrumentalness=${ins}&liveness=${li}&energy=${en}&speechiness=${sp}&valence=${va}`);
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&acousticness=${ac}&danceability=${da}&instrumentalness=${ins}&liveness=${li}&energy=${en}&speechiness=${sp}&valence=${va}`);
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
