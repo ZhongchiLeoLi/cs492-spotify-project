@@ -1,0 +1,17 @@
+.sliderRow {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.sliderRow p {
+  font-size: 12px;
+  width: 160px;
+  text-align: right;
+}
+
+.checkBox {
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+}

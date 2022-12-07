@@ -21,6 +21,7 @@ import {
 } from 'chart.js';
 import { Radar } from 'react-chartjs-2';
 import SearchBar from '../../components/SearchBar';
+import ValueSlider from '../../components/ValueSlider';
 
 ChartJS.register(
   RadialLinearScale,
@@ -45,6 +46,7 @@ export async function getServerSideProps({ params }) {
   try {
     const PlaylistData = await playlist.json();
     const RecsData = await recs.json();
+    console.log("PlaylistData", PlaylistData)
 
     if(!PlaylistData || !RecsData) {
       return {
@@ -67,6 +69,7 @@ export async function getServerSideProps({ params }) {
 }
 
 export default function Result({ playlist, recs, id}) {
+  const [recTracks, setRecTracks] = useState(recs.Tracks);
   const [selectedTracks, setSelectedTracks] = useState([]);
   const {acousticness, danceability, instrumentalness, liveness, energy, speechiness, valence} = playlist.Centroid;
   const {acousticness: rec_acousticness, danceability: rec_danceability, instrumentalness: rec_instrumentalness, liveness: rec_liveness, energy: rec_energy, speechiness: rec_speechiness, valence: rec_valence} = recs.Centroid;
@@ -77,6 +80,13 @@ export default function Result({ playlist, recs, id}) {
   const [en, setEn] = useState(0);
   const [sp, setSp] = useState(0);
   const [va, setVa] = useState(0);
+  const [disableAc, setDisableAc] = useState(false);
+  const [disableDa, setDisableDa] = useState(false);
+  const [disableIns, setDisableIns] = useState(false);
+  const [disableLi, setDisableLi] = useState(false);
+  const [disableEn, setDisableEn] = useState(false);
+  const [disableSp, setDisableSp] = useState(false);
+  const [disableVa, setDisableVa] = useState(false);
 
   const [data, setData] = useState({
     labels: ['Acousticness', 'Danceability', 'Instrumentalness', 'Liveness', 'Energy', 'Speechiness', 'Valence'],
@@ -98,20 +108,62 @@ export default function Result({ playlist, recs, id}) {
     ],
   });
 
+  const fields = [
+    {
+      name: "Acousticness",
+      checked: disableAc,
+      setChecked: setDisableAc,
+      setValue: setAc,
+    },
+    {
+      name: "Danceability",
+      checked: disableDa,
+      setChecked: setDisableDa,
+      setValue: setDa,
+    },
+    {
+      name: "Instrumentalness",
+      checked: disableIns,
+      setChecked: setDisableIns,
+      setValue: setIns,
+    },
+    {
+      name: "Liveness",
+      checked: disableLi,
+      setChecked: setDisableLi,
+      setValue: setLi,
+    },
+    {
+      name: "Energy",
+      checked: disableEn,
+      setChecked: setDisableEn,
+      setValue: setEn,
+    },
+    {
+      name: "Speechiness",
+      checked: disableSp,
+      setChecked: setDisableSp,
+      setValue: setSp,
+    },
+    {
+      name: "Valence",
+      checked: disableVa,
+      setChecked: setDisableVa,
+      setValue: setVa,
+    }
+  ];
+
   const updateRecs = async () => {
     let tracks = selectedTracks.join();
-    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&seeds${tracks}`, {agent: httpsAgent});
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&seeds=${tracks}`, {agent: httpsAgent});
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
+      setRecTracks(RecsData.Tracks);
       setData({
         ...data,
         datasets: [
-          {
-            ...data.datasets[0],
-            label: 'Your playlist',
-            data: [acousticness, danceability, instrumentalness, liveness, energy, speechiness, valence],
-          },
+          data.datasets[0],
           {
             ...data.datasets[1],
             data: [RecsCentroid.acousticness, RecsCentroid.danceability, RecsCentroid.instrumentalness, RecsCentroid.liveness, RecsCentroid.energy, RecsCentroid.speechiness, RecsCentroid.valence],
@@ -124,21 +176,25 @@ export default function Result({ playlist, recs, id}) {
   }
 
   const updateRecsWithCustomSpecs = async () => {
-    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}&acousticness=${ac}&danceability=${da}&instrumentalness=${ins}&liveness=${li}&energy=${en}&speechiness=${sp}&valence=${va}`, {agent: httpsAgent});
+    const recs = await fetch(`https://147.182.164.204:8080/recs?id=${id}${disableAc ? "" : "&acousticness=" + ac}${disableDa ? "" : "&danceability=" + da}${disableIns ? "" : "&instrumentalness=" + ins}${disableLi ? "" : "&liveness=" + li}${disableEn ? "" : "&energy=" + en}${disableSp ? "" : "&speechiness=" + sp}${disableVa ? "" : "&valence=" + va}`, {agent: httpsAgent});
     try {
       const RecsData = await recs.json();
       const RecsCentroid = RecsData.Centroid;
+      setRecTracks(RecsData.Tracks);
       setData({
         ...data,
         datasets: [
-          {
-            ...data.datasets[0],
-            label: 'Your values',
-            data: [ac, da, ins, li, en, sp, va],
-          },
+          data.datasets[0],
           {
             ...data.datasets[1],
             data: [RecsCentroid.acousticness, RecsCentroid.danceability, RecsCentroid.instrumentalness, RecsCentroid.liveness, RecsCentroid.energy, RecsCentroid.speechiness, RecsCentroid.valence],
+          },
+          {
+            label: "Your slider values",
+            data: [ac, da, ins, li, en, sp, va],
+            backgroundColor: 'rgba(75,192,192, 0.2)',
+            borderColor: 'rgb(75,192,192)',
+            borderWidth: 1,
           }
         ]
       });
@@ -146,11 +202,6 @@ export default function Result({ playlist, recs, id}) {
       console.log(error);
     }
   }
-
-  const marks = {
-    0: 0,
-    1: 1
-  };
 
   return (
     <div className={styles.container}>
@@ -169,7 +220,7 @@ export default function Result({ playlist, recs, id}) {
           Note that the recommendations are different each time, so feel free to click &quot;Get Recommendations&quot; multiple times to see the differences.
         </h5>
         <div className={styles.leftHeader}>
-          <h4>Your playlist:</h4>
+          <h4>Your playlist {`(MSE: ${playlist.MSE.toFixed(3)})`}:</h4>
           <div className={styles.selection}>
             <p className={selectedTracks.length > 5 && styles.error}>{selectedTracks.length}/5</p>
             <button
@@ -199,6 +250,15 @@ export default function Result({ playlist, recs, id}) {
             </div>
           ))}
         </div>
+        <div className={styles.leftHeader}>
+          <h4>Spotify&apos;s Recommendations:</h4>
+        </div>
+        <div className={styles.trackList}>
+          {recTracks.map((track) => (
+              
+                <Track key={track.ID} track={track} />
+            ))}
+        </div>
         <h5>
           You can also adjust the sliders below, and the values of each field will be sent to Spotify for generating recommendations.
           You will see the graph update shortly after you click &quot;Get Recommendations&quot;.
@@ -212,42 +272,9 @@ export default function Result({ playlist, recs, id}) {
           </button>          
         </div>
         <div className={styles.sliders}>
-          <div className={styles.sliderRow}>
-              <div>
-                <p>Acousticness</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setAc(val)}}/>
-              </div>
-              <div>
-                <p>Danceability</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setDa(val)}}/>
-              </div>
-          </div>
-          <div className={styles.sliderRow}>
-              <div>
-                <p>Instrumentalness</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setIns(val)}}/>
-              </div>
-              <div>
-                <p>Liveness</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setLi(val)}}/>
-              </div>
-          </div>
-          <div className={styles.sliderRow}>
-              <div>
-                <p>Energy</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setEn(val)}}/>
-              </div>
-              <div>
-                <p>Speechiness</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0} dots={true} marks={marks} onChange={(val)=> {setSp(val)}}/>
-              </div>
-          </div>
-          <div className={styles.sliderRow}>
-              <div>
-                <p>Valence</p>
-                <Slider min={0} max={1} step={0.1} defaultValue={0}  dots={true} marks={marks} onChange={(val)=> {setVa(val)}}/>
-              </div>
-          </div>
+          {fields.map((field => (
+            <ValueSlider key={field.name} field={field} />
+          )))}
         </div>
       </div>
       <div className={styles.chart}>
