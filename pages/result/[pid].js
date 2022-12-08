@@ -255,9 +255,10 @@ export default function Result({ playlist, recs, id}) {
         </div>
         <div className={styles.trackList}>
           {recTracks.map((track) => (
-              
-                <Track key={track.ID} track={track} />
-            ))}
+            <Link key={track.ID} href={`https://open.spotify.com/track/${track.ID}`} target="_blank" >
+              <Track key={track.ID} track={track} />
+            </Link>
+          ))}
         </div>
         <h5>
           You can also adjust the sliders below, and the values of each field will be sent to Spotify for generating recommendations.
