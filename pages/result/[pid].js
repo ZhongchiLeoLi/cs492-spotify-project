@@ -191,7 +191,7 @@ export default function Result({ playlist, recs, id}) {
           },
           {
             label: "Your slider values",
-            data: [ac, da, ins, li, en, sp, va],
+            data: [disableAc ? 0 : ac, disableDa ? 0 : da, disableIns ? 0 : ins, disableLi ? 0 : li, disableEn ? 0 : en, disableSp ? 0 : sp, disableVa ? 0 : va],
             backgroundColor: 'rgba(75,192,192, 0.2)',
             borderColor: 'rgb(75,192,192)',
             borderWidth: 1,
@@ -211,7 +211,7 @@ export default function Result({ playlist, recs, id}) {
           <SearchBar placeholder='Paste another playlist link' />
         </div>
         <h4>
-          The chart on the right shows the average statistics of your playlist, and the average statistics of the 50 songs recommended by spotify.
+          The chart on the right shows the average statistics of your playlist, and the average statistics of the 20 songs recommended by spotify.
           To get the recommendations, 5 songs were selected randomly from your playlist and sent to Spotify. 
         </h4>
         <h5>
@@ -261,7 +261,8 @@ export default function Result({ playlist, recs, id}) {
           ))}
         </div>
         <h5>
-          You can also adjust the sliders below, and the values of each field will be sent to Spotify for generating recommendations.
+          You can also adjust the sliders below, and the values of each field will be sent to Spotify along with your playlist for generating recommendations.
+          Disable the sliders if you don&apos;t want their values to be submitted.
           You will see the graph update shortly after you click &quot;Get Recommendations&quot;.
         </h5>
         <div className={styles.leftHeader}>
